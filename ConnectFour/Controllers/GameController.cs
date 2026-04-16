@@ -40,36 +40,56 @@ namespace ConnectFour.Controllers
 
         public void StartGame()
         {
-            Player currentPlayer = player1;
+            bool playAgain = true;
 
-            while (true)
+            while (playAgain)
             {
-                view.DisplayBoard(board.GetGrid());
+                board = new Board(); // reset board
+                Player currentPlayer = player1;
 
-                int column = currentPlayer.GetMove();
-
-                if (!board.DropDisc(column, currentPlayer.Symbol))
-                {
-                    view.ShowMessage("Invalid move! Try again.");
-                    continue;
-                }
-
-                if (board.CheckWin(currentPlayer.Symbol))
+                while (true)
                 {
                     view.DisplayBoard(board.GetGrid());
-                    view.ShowMessage($"{currentPlayer.Name} wins!");
-                    break;
+
+                    // 👇 ADD TURN INDICATOR HERE
+                    view.ShowTurn(currentPlayer.Name, currentPlayer.Symbol);
+
+                    int column = currentPlayer.GetMove();
+
+                    if (!board.DropDisc(column, currentPlayer.Symbol))
+                    {
+                        view.ShowMessage("Invalid move! Try again.");
+                        continue;
+                    }
+
+                    if (board.CheckWin(currentPlayer.Symbol))
+                    {
+                        view.DisplayBoard(board.GetGrid());
+                        view.ShowMessage($"It is a Connect 4. {currentPlayer.Name} Wins!");
+                        break;
+                    }
+
+                    if (board.IsFull())
+                    {
+                        view.DisplayBoard(board.GetGrid());
+                        view.ShowMessage("It's a draw!");
+                        break;
+                    }
+
+                    currentPlayer = (currentPlayer == player1) ? player2 : player1;
                 }
 
-                if (board.IsFull())
+                // 🔁 Restart prompt (updated style)
+                view.ShowMessage("Restart? Yes(1) No(0): ");
+                string input = Console.ReadLine();
+
+                if (input != "1")
                 {
-                    view.DisplayBoard(board.GetGrid());
-                    view.ShowMessage("It's a draw!");
-                    break;
+                    playAgain = false;
                 }
-
-                currentPlayer = (currentPlayer == player1) ? player2 : player1;
             }
+
+            view.ShowMessage("Thanks for playing!");
         }
     }
 }
