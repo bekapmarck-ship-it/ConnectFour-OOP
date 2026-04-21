@@ -48,11 +48,16 @@ namespace ConnectFour.Controllers
                 Player currentPlayer = player1;
                 while (true)
                 {
-                    view.DisplayBoard(board.GetGrid());
+                    while (true)
+                    {
+                        view.DisplayBoard(board.GetGrid());
 
-                    view.ShowTurn(currentPlayer.Name, currentPlayer.Symbol);
+                        // small pause before showing turn
+                        Thread.Sleep(500);
 
-                    int column = currentPlayer.GetMove();
+                        view.ShowTurn(currentPlayer.Name, currentPlayer.Symbol);
+
+                        int column = currentPlayer.GetMove();
 
                     if (!board.DropDisc(column, currentPlayer.Symbol))
                     {

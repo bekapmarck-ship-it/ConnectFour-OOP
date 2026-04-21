@@ -11,11 +11,15 @@ namespace ConnectFour.Views
         public void ShowTurn(string playerName, char symbol)
         {
             if (symbol == 'X')
+            {
                 Console.ForegroundColor = ConsoleColor.Red;
+            }
             else
+            {
                 Console.ForegroundColor = ConsoleColor.Yellow;
+            }
 
-            Console.WriteLine($"{playerName}'s turn ({symbol})");
+            Console.WriteLine($"\n{playerName}'s turn ({symbol})");
             Console.ResetColor();
         }
 
