@@ -13,7 +13,6 @@ namespace ConnectFour.Players
             this.board = board;
         }
 
-        //  IMPORTANT: update board when game resets
         public void SetBoard(Board newBoard)
         {
             board = newBoard;
@@ -21,63 +20,50 @@ namespace ConnectFour.Players
 
         public override int GetMove()
         {
-            // 1️⃣ Try to win
-            for (int col = 0; col < 7; col++)
+            // Win
+            for (int c = 0; c < 7; c++)
             {
-                int row = board.GetNextOpenRow(col);
-                if (row != -1)
+                int r = board.GetNextOpenRow(c);
+                if (r != -1)
                 {
-                    board.SetCell(row, col, Symbol);
-
+                    board.SetCell(r, c, Symbol);
                     if (board.CheckWin(Symbol))
                     {
-                        board.ClearCell(row, col);
-                        Console.WriteLine($"{Name} plays column {col + 1} (winning move)");
-                        return col;
+                        board.ClearCell(r, c);
+                        Console.WriteLine($"{Name} plays column {c + 1} (win)");
+                        return c;
                     }
-
-                    board.ClearCell(row, col);
+                    board.ClearCell(r, c);
                 }
             }
 
-            // 2️⃣ Block opponent
-            char opponent = (Symbol == 'X') ? 'O' : 'X';
-
-            for (int col = 0; col < 7; col++)
+            // Block
+            char opp = Symbol == 'X' ? 'O' : 'X';
+            for (int c = 0; c < 7; c++)
             {
-                int row = board.GetNextOpenRow(col);
-                if (row != -1)
+                int r = board.GetNextOpenRow(c);
+                if (r != -1)
                 {
-                    board.SetCell(row, col, opponent);
-
-                    if (board.CheckWin(opponent))
+                    board.SetCell(r, c, opp);
+                    if (board.CheckWin(opp))
                     {
-                        board.ClearCell(row, col);
-                        Console.WriteLine($"{Name} plays column {col + 1} (blocking move)");
-                        return col;
+                        board.ClearCell(r, c);
+                        Console.WriteLine($"{Name} plays column {c + 1} (block)");
+                        return c;
                     }
-
-                    board.ClearCell(row, col);
+                    board.ClearCell(r, c);
                 }
             }
 
-            // 3️⃣ Prefer center column (smart move)
-            int center = 3;
-            if (board.GetNextOpenRow(center) != -1)
-            {
-                Console.WriteLine($"{Name} plays column {center + 1} (center)");
-                return center;
-            }
+            // Center
+            if (board.GetNextOpenRow(3) != -1) return 3;
 
-            // 4️⃣ Random valid move
-            int randomCol;
-            do
-            {
-                randomCol = rand.Next(0, 7);
-            } while (board.GetNextOpenRow(randomCol) == -1);
+            // Random
+            int col;
+            do { col = rand.Next(0, 7); }
+            while (board.GetNextOpenRow(col) == -1);
 
-            Console.WriteLine($"{Name} plays column {randomCol + 1}");
-            return randomCol;
+            return col;
         }
     }
 }

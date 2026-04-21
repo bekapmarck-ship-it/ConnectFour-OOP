@@ -21,21 +21,17 @@ namespace ConnectFour.Models
                     grid[r, c] = '.';
         }
 
-        public char[,] GetGrid()
-        {
-            return grid;
-        }
+        public char[,] GetGrid() => grid;
 
         public bool DropDisc(int column, char symbol)
         {
-            if (column < 0 || column >= cols)
-                return false;
+            if (column < 0 || column >= cols) return false;
 
-            for (int row = rows - 1; row >= 0; row--)
+            for (int r = rows - 1; r >= 0; r--)
             {
-                if (grid[row, column] == '.')
+                if (grid[r, column] == '.')
                 {
-                    grid[row, column] = symbol;
+                    grid[r, column] = symbol;
                     return true;
                 }
             }
@@ -44,102 +40,50 @@ namespace ConnectFour.Models
 
         public int GetNextOpenRow(int column)
         {
-            for (int row = rows - 1; row >= 0; row--)
-            {
-                if (grid[row, column] == '.')
-                {
-                    return row;
-                }
-            }
+            for (int r = rows - 1; r >= 0; r--)
+                if (grid[r, column] == '.') return r;
             return -1;
         }
 
-        public void SetCell(int row, int column, char symbol)
-        {
-            grid[row, column] = symbol;
-        }
-
-        public void ClearCell(int row, int column)
-        {
-            grid[row, column] = '.';
-        }
+        public void SetCell(int r, int c, char s) => grid[r, c] = s;
+        public void ClearCell(int r, int c) => grid[r, c] = '.';
 
         public bool IsFull()
         {
             for (int c = 0; c < cols; c++)
-            {
-                if (grid[0, c] == '.')
-                    return false;
-            }
+                if (grid[0, c] == '.') return false;
             return true;
         }
 
-        public bool CheckWin(char symbol)
+        public bool CheckWin(char s)
         {
-            return CheckHorizontal(symbol) ||
-                   CheckVertical(symbol) ||
-                   CheckDiagonal(symbol);
-        }
-
-        private bool CheckHorizontal(char symbol)
-        {
+            // Horizontal
             for (int r = 0; r < rows; r++)
-            {
                 for (int c = 0; c < cols - 3; c++)
-                {
-                    if (grid[r, c] == symbol &&
-                        grid[r, c + 1] == symbol &&
-                        grid[r, c + 2] == symbol &&
-                        grid[r, c + 3] == symbol)
+                    if (grid[r, c] == s && grid[r, c + 1] == s &&
+                        grid[r, c + 2] == s && grid[r, c + 3] == s)
                         return true;
-                }
-            }
-            return false;
-        }
 
-        private bool CheckVertical(char symbol)
-        {
+            // Vertical
             for (int c = 0; c < cols; c++)
-            {
                 for (int r = 0; r < rows - 3; r++)
-                {
-                    if (grid[r, c] == symbol &&
-                        grid[r + 1, c] == symbol &&
-                        grid[r + 2, c] == symbol &&
-                        grid[r + 3, c] == symbol)
+                    if (grid[r, c] == s && grid[r + 1, c] == s &&
+                        grid[r + 2, c] == s && grid[r + 3, c] == s)
                         return true;
-                }
-            }
-            return false;
-        }
 
-        private bool CheckDiagonal(char symbol)
-        {
-            // bottom-left → top-right
+            // Diagonal /
             for (int r = 3; r < rows; r++)
-            {
                 for (int c = 0; c < cols - 3; c++)
-                {
-                    if (grid[r, c] == symbol &&
-                        grid[r - 1, c + 1] == symbol &&
-                        grid[r - 2, c + 2] == symbol &&
-                        grid[r - 3, c + 3] == symbol)
+                    if (grid[r, c] == s && grid[r - 1, c + 1] == s &&
+                        grid[r - 2, c + 2] == s && grid[r - 3, c + 3] == s)
                         return true;
-                }
-            }
 
-            // top-left → bottom-right
+            // Diagonal \
             for (int r = 0; r < rows - 3; r++)
-            {
                 for (int c = 0; c < cols - 3; c++)
-                {
-                    if (grid[r, c] == symbol &&
-                        grid[r + 1, c + 1] == symbol &&
-                        grid[r + 2, c + 2] == symbol &&
-                        grid[r + 3, c + 3] == symbol)
+                    if (grid[r, c] == s && grid[r + 1, c + 1] == s &&
+                        grid[r + 2, c + 2] == s && grid[r + 3, c + 3] == s)
                         return true;
-                }
-            }
 
             return false;
         }

@@ -17,26 +17,9 @@ namespace ConnectFour.Controllers
             board = new Board();
             view = new ConsoleView();
 
-            view.ShowMessage("Select Game Mode:");
-            view.ShowMessage("1. Human vs Human");
-            view.ShowMessage("2. Human vs Computer");
-
-            int choice;
-            while (!int.TryParse(Console.ReadLine(), out choice) || (choice != 1 && choice != 2))
-            {
-                view.ShowMessage("Invalid choice. Enter 1 or 2:");
-            }
-
-            player1 = new HumanPlayer { Name = "Player 1", Symbol = 'X' };
-
-            if (choice == 1)
-            {
-                player2 = new HumanPlayer { Name = "Player 2", Symbol = 'O' };
-            }
-            else
-            {
-                player2 = new ComputerPlayer(board) { Name = "Computer", Symbol = 'O' };
-            }
+            // Fixed names
+            player1 = new HumanPlayer { Name = "Johnson", Symbol = 'X' };
+            player2 = new HumanPlayer { Name = "Ariane", Symbol = 'O' };
         }
 
         public void StartGame()
@@ -45,22 +28,14 @@ namespace ConnectFour.Controllers
 
             while (playAgain)
             {
-                board = new Board(); // reset board
-
-                // 🔥 IMPORTANT: update AI with new board
-                if (player2 is ComputerPlayer ai)
-                {
-                    ai.SetBoard(board);
-                }
-
+                board = new Board();
                 Player currentPlayer = player1;
 
                 while (true)
                 {
                     view.DisplayBoard(board.GetGrid());
 
-                    // ⏱ smooth pause before turn
-                    Thread.Sleep(400);
+                    Thread.Sleep(300);
 
                     view.ShowTurn(currentPlayer.Name, currentPlayer.Symbol);
 
@@ -72,7 +47,6 @@ namespace ConnectFour.Controllers
                         continue;
                     }
 
-                    // show updated board immediately
                     view.DisplayBoard(board.GetGrid());
 
                     if (board.CheckWin(currentPlayer.Symbol))
@@ -87,16 +61,14 @@ namespace ConnectFour.Controllers
                         break;
                     }
 
-                    // 🤖 delay only for computer (feels natural)
                     if (currentPlayer is ComputerPlayer)
                     {
-                        Thread.Sleep(700);
+                        Thread.Sleep(800);
                     }
 
                     currentPlayer = (currentPlayer == player1) ? player2 : player1;
                 }
 
-                // 🔁 Restart prompt
                 view.ShowMessage("Restart? Yes(1) No(0): ");
                 string input = Console.ReadLine();
 
