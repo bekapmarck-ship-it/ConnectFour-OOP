@@ -17,9 +17,22 @@ namespace ConnectFour.Controllers
             board = new Board();
             view = new ConsoleView();
 
-            // Fixed names
+            view.ShowMessage("Select Game Mode:");
+            view.ShowMessage("1. HumanPlayer vs HumanPlayer");
+            view.ShowMessage("2. HumanPlayer vs AI");
+
+            int choice;
+            while (!int.TryParse(Console.ReadLine(), out choice) || (choice != 1 && choice != 2))
+            {
+                view.ShowMessage("Enter 1 or 2:");
+            }
+
             player1 = new HumanPlayer { Name = "Johnson", Symbol = 'X' };
-            player2 = new HumanPlayer { Name = "Ariane", Symbol = 'O' };
+
+            if (choice == 1)
+                player2 = new HumanPlayer { Name = "Ariane", Symbol = 'O' };
+            else
+                player2 = new ComputerPlayer(board) { Name = "AI", Symbol = 'O' };
         }
 
         public void StartGame()
@@ -29,6 +42,10 @@ namespace ConnectFour.Controllers
             while (playAgain)
             {
                 board = new Board();
+
+                if (player2 is ComputerPlayer ai)
+                    ai.SetBoard(board);
+
                 Player currentPlayer = player1;
 
                 while (true)
@@ -36,14 +53,16 @@ namespace ConnectFour.Controllers
                     view.DisplayBoard(board.GetGrid());
 
                     Thread.Sleep(300);
-
                     view.ShowTurn(currentPlayer.Name, currentPlayer.Symbol);
+
+                    if (currentPlayer is ComputerPlayer)
+                        Thread.Sleep(800);
 
                     int column = currentPlayer.GetMove();
 
                     if (!board.DropDisc(column, currentPlayer.Symbol))
                     {
-                        view.ShowMessage("Invalid move! Try again.");
+                        view.ShowMessage("Invalid move!");
                         continue;
                     }
 
@@ -51,7 +70,7 @@ namespace ConnectFour.Controllers
 
                     if (board.CheckWin(currentPlayer.Symbol))
                     {
-                        view.ShowMessage($"It is a Connect 4. {currentPlayer.Name} Wins!");
+                        view.ShowMessage($"🎉 {currentPlayer.Name} Wins!");
                         break;
                     }
 
@@ -61,18 +80,11 @@ namespace ConnectFour.Controllers
                         break;
                     }
 
-                    if (currentPlayer is ComputerPlayer)
-                    {
-                        Thread.Sleep(800);
-                    }
-
                     currentPlayer = (currentPlayer == player1) ? player2 : player1;
                 }
 
                 view.ShowMessage("Restart? Yes(1) No(0): ");
-                string input = Console.ReadLine();
-
-                playAgain = (input == "1");
+                playAgain = Console.ReadLine() == "1";
             }
 
             view.ShowMessage("Thanks for playing!");
