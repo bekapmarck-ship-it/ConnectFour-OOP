@@ -1,6 +1,7 @@
 ﻿using ConnectFour.Models;
 using ConnectFour.Views;
 using ConnectFour.Players;
+using System.Threading;
 
 namespace ConnectFour.Controllers
 {
@@ -45,19 +46,25 @@ namespace ConnectFour.Controllers
             while (playAgain)
             {
                 board = new Board(); // reset board
+
+                // 🔥 IMPORTANT: update AI with new board
+                if (player2 is ComputerPlayer ai)
+                {
+                    ai.SetBoard(board);
+                }
+
                 Player currentPlayer = player1;
+
                 while (true)
                 {
-                    while (true)
-                    {
-                        view.DisplayBoard(board.GetGrid());
+                    view.DisplayBoard(board.GetGrid());
 
-                        // small pause before showing turn
-                        Thread.Sleep(500);
+                    // ⏱ smooth pause before turn
+                    Thread.Sleep(400);
 
-                        view.ShowTurn(currentPlayer.Name, currentPlayer.Symbol);
+                    view.ShowTurn(currentPlayer.Name, currentPlayer.Symbol);
 
-                        int column = currentPlayer.GetMove();
+                    int column = currentPlayer.GetMove();
 
                     if (!board.DropDisc(column, currentPlayer.Symbol))
                     {
@@ -65,7 +72,7 @@ namespace ConnectFour.Controllers
                         continue;
                     }
 
-                    // Show updated board AFTER move
+                    // show updated board immediately
                     view.DisplayBoard(board.GetGrid());
 
                     if (board.CheckWin(currentPlayer.Symbol))
@@ -80,7 +87,7 @@ namespace ConnectFour.Controllers
                         break;
                     }
 
-                    // small delay ONLY for computer
+                    // 🤖 delay only for computer (feels natural)
                     if (currentPlayer is ComputerPlayer)
                     {
                         Thread.Sleep(700);
@@ -88,14 +95,12 @@ namespace ConnectFour.Controllers
 
                     currentPlayer = (currentPlayer == player1) ? player2 : player1;
                 }
-                // 🔁 Restart prompt (updated style)
+
+                // 🔁 Restart prompt
                 view.ShowMessage("Restart? Yes(1) No(0): ");
                 string input = Console.ReadLine();
 
-                if (input != "1")
-                {
-                    playAgain = false;
-                }
+                playAgain = (input == "1");
             }
 
             view.ShowMessage("Thanks for playing!");

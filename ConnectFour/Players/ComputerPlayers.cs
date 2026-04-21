@@ -13,9 +13,15 @@ namespace ConnectFour.Players
             this.board = board;
         }
 
+        //  IMPORTANT: update board when game resets
+        public void SetBoard(Board newBoard)
+        {
+            board = newBoard;
+        }
+
         public override int GetMove()
         {
-            // 1. Try to win
+            // 1️⃣ Try to win
             for (int col = 0; col < 7; col++)
             {
                 int row = board.GetNextOpenRow(col);
@@ -34,7 +40,7 @@ namespace ConnectFour.Players
                 }
             }
 
-            // 2. Block opponent
+            // 2️⃣ Block opponent
             char opponent = (Symbol == 'X') ? 'O' : 'X';
 
             for (int col = 0; col < 7; col++)
@@ -55,7 +61,15 @@ namespace ConnectFour.Players
                 }
             }
 
-            // 3. Random valid move
+            // 3️⃣ Prefer center column (smart move)
+            int center = 3;
+            if (board.GetNextOpenRow(center) != -1)
+            {
+                Console.WriteLine($"{Name} plays column {center + 1} (center)");
+                return center;
+            }
+
+            // 4️⃣ Random valid move
             int randomCol;
             do
             {
