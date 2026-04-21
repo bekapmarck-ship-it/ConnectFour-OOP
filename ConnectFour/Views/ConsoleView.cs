@@ -21,14 +21,44 @@ namespace ConnectFour.Views
 
         public void DisplayBoard(char[,] grid)
         {
-            for (int r = 0; r < grid.GetLength(0); r++)
+            int rows = grid.GetLength(0);
+            int cols = grid.GetLength(1);
+
+            Console.Clear();
+            Console.WriteLine("Connect 4 Game Development Project:\n");
+
+            for (int r = 0; r < rows; r++)
             {
-                for (int c = 0; c < grid.GetLength(1); c++)
+                Console.Write("| ");
+                for (int c = 0; c < cols; c++)
                 {
-                    Console.Write(grid[r, c] + " ");
+                    char cell = grid[r, c];
+
+                    if (cell == 'X')
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("X ");
+                    }
+                    else if (cell == 'O')
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.Write("O ");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        Console.Write("# ");
+                    }
+
+                    Console.ResetColor();
                 }
-                Console.WriteLine();
+                Console.WriteLine("|");
             }
+
+            Console.Write("| ");
+            for (int i = 1; i <= cols; i++)
+                Console.Write(i + " ");
+            Console.WriteLine("|\n");
         }
     }
 }
