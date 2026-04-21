@@ -46,12 +46,10 @@ namespace ConnectFour.Controllers
             {
                 board = new Board(); // reset board
                 Player currentPlayer = player1;
-
                 while (true)
                 {
                     view.DisplayBoard(board.GetGrid());
 
-                    // 👇 ADD TURN INDICATOR HERE
                     view.ShowTurn(currentPlayer.Name, currentPlayer.Symbol);
 
                     int column = currentPlayer.GetMove();
@@ -62,23 +60,29 @@ namespace ConnectFour.Controllers
                         continue;
                     }
 
+                    // Show updated board AFTER move
+                    view.DisplayBoard(board.GetGrid());
+
                     if (board.CheckWin(currentPlayer.Symbol))
                     {
-                        view.DisplayBoard(board.GetGrid());
                         view.ShowMessage($"It is a Connect 4. {currentPlayer.Name} Wins!");
                         break;
                     }
 
                     if (board.IsFull())
                     {
-                        view.DisplayBoard(board.GetGrid());
                         view.ShowMessage("It's a draw!");
                         break;
                     }
 
+                    // small delay ONLY for computer
+                    if (currentPlayer is ComputerPlayer)
+                    {
+                        Thread.Sleep(700);
+                    }
+
                     currentPlayer = (currentPlayer == player1) ? player2 : player1;
                 }
-
                 // 🔁 Restart prompt (updated style)
                 view.ShowMessage("Restart? Yes(1) No(0): ");
                 string input = Console.ReadLine();
